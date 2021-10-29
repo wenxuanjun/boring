@@ -1,0 +1,15 @@
+<div class="card" style="word-break:break-all">
+	<div class="card-content">
+		<span class="card-title">
+          	{% if result.url %}
+          	<a href="{{ result.url }}" rel="noopener noreferrer">{{ result.title|safe }}</a>
+          	{% else %}{{ result.title|safe}}{% endif %}
+        </span>
+        {%- if result.content %}
+        <p>{{ result.content|safe }}</p>
+        {% endif -%}
+	</div>
+    <div class="card-action" style="margin-bottom:0">
+        <small class="green-text">{{ result.pretty_url }}</small>
+	</div>
+</div>

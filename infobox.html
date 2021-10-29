@@ -1,0 +1,39 @@
+<div class="card" style="word-break:break-all">
+	<div class="card-content">
+		<span class="card-title">{{ infobox.infobox }}</span>
+        {% if infobox.img_src %}
+        <div class="section">
+            <img class="materialboxed" width="100%" src="{{ image_proxify(infobox.img_src) }}" />
+        </div>
+        {% endif %}
+        {%- if infobox.content %}
+		<div class="divider"></div>
+        <div class="section">
+            <p>{{ infobox.content | safe }}</p>
+        </div>
+        {% endif -%}
+        {% if infobox.attributes -%}
+		<div class="divider"></div>
+        <div class="section">
+            <table class="striped">
+                {% for attribute in infobox.attributes -%}
+                <tr>
+                    <td>{{ attribute.label }}</td>
+                    {%- if attribute.image -%}
+                    <td><img width="100%" src="{{ image_proxify(attribute.image.src) }}" alt="{{ attribute.image.alt }}" /></td>
+                    {%- else -%}
+                    <td>{{ attribute.value }}</td>
+                    {%- endif -%}
+                </tr>
+            {% endfor -%}
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.materialboxed');
+        var instances = M.Materialbox.init(elems, {});
+    });
+</script>

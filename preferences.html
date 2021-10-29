@@ -1,0 +1,74 @@
+{% extends "boring/base.html" %}
+{% block title %}{{ _('preferences') }} - {% endblock %}
+{% block content %}
+<div class="container" style="margin-top:30px">
+    <div class="row">
+        <a href="{{ url_for('index') }}"><svg xmlns="http://www.w3.org/2000/svg" width="150px" viewBox="0 0 320 100"><text font-weight="bold" font-family="Arvo,sans-serif" font-size="85" y="80" x="0">Boring</text></svg></a>
+    </div>
+    <div class="row">
+        <form method="post" action="{{ url_for('preferences') }}">
+            <div class="section">
+                <div>
+                    <ul class="tabs">
+                        {% for categ in all_categories %}
+                        <li {% if loop.first %}class="tab active" {% else %}class="tab" {% endif %}><a href="#tab_engine_{{ categ|replace(' ', '_') }}">{{ _(categ) }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% for categ in all_categories %}
+                <div id="tab_engine_{{ categ|replace(' ', '_') }}">
+                    <table class="striped">
+                        <thead>
+                            <tr>
+                                <th>{{ _("Engine name") }}</th>
+                                <th>{{ _("Selected language") }}</th>
+                                <th>{{ _("SafeSearch") }}</th>
+                                <th>{{ _("Max time") }}</th>
+                                <th>{{ _("Allow") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for search_engine in engines_by_category[categ] %}
+                            {% if not search_engine.private %}
+                            <tr>
+                                <td>{% if not search_engine.https_support %}{% endif %}{{ search_engine.name }}</td>
+                                <td>
+                                    {% if stats[search_engine.name].supports_selected_language %}<span class="new badge green" data-badge-caption="">{{ _("supported") }}</span>
+                                    {% else %}<span class="new badge red" data-badge-caption="{{ _("not supported") }}"></span>{% endif %}</td>
+                                <td>
+                                    {% if search_engine.safesearch==True %}<span class="new badge green" data-badge-caption="{{ _("supported") }}"></span>
+                                    {% else %}<span class="new badge red" data-badge-caption="{{ _("not supported") }}"></span>{% endif %}</td>
+                                <td>{% if stats[search_engine.name]['warn_timeout'] %}{% endif %}{{ search_engine.timeout }}</td>
+                                <td>
+                                    <div class="switch">
+                                        <label class="onoffswitch-label">
+                                            <input type="checkbox" name="{{ 'engine_' + search_engine.name|replace(' ', '_') + '__' + categ|replace(' ', '_') }}"
+                                                {% if (search_engine.name, categ) not in disabled_engines %}checked="checked"{% endif %}>
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="divider"></div>
+            <div class="section">
+                <button type="submit" class="btn waves-effect waves-light white black-text">{{ _('save') }}</button>
+                <a href="{{ url_for('index') }}" style="margin-left:10px"><button class="btn waves-effect waves-light white black-text">{{ _('back') }}</button></a>
+                <a href="{{ url_for('clear_cookies') }}" style="margin-left:10px"><button class="btn waves-effect waves-light white black-text">{{ _('Reset defaults') }}</button></a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.tabs');
+        var instances = M.Tabs.init(elems, {})
+    })
+</script>
+{% endblock %}
